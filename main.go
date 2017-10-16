@@ -17,7 +17,20 @@ var (
 	source      string = "https://github.com/giantswarm/flannel-network-health"
 )
 
+const ListenOn  = ":8081"
+
 func main() {
+	// for architect
+	if os.Args[1] == "version" {
+                println("flannel network health version 0.1")
+                return
+        }
+        if os.Args[1] == "--help" {
+                println("flannel network health version 0.1")
+                return
+        }
+
+
 	var err error
 	// Create a new logger which is used by all packages.
 	var logger micrologger.Logger
@@ -50,7 +63,7 @@ func main() {
 	// start blocking http server
 	http.HandleFunc("/bridge-healthz", s.CheckBridgeInterface)
 	http.HandleFunc("/flannel-healthz", s.CheckFlannelInterface)
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe(ListenOn, nil)
 }
 
 
