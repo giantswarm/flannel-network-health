@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/giantswarm/micrologger"
 	"io/ioutil"
@@ -10,7 +11,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	"bytes"
 )
 
 type Server struct {
@@ -87,11 +87,12 @@ func (s *Server) CheckBridgeInterface(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "FAILED")
 	} else {
 		fmt.Fprintln(w, "OK")
-		s.Logger.Log(fmt.Printf("Healthcheck for bridge %s has been successful. Bridge is present and configured with ip %s.",s.BridgeInterface,s.BridgeIP))
+		s.Logger.Log(fmt.Printf("Healthcheck for bridge %s has been successful. Bridge is present and configured with ip %s.", s.BridgeInterface, s.BridgeIP))
 	}
 }
 
-func (s *Server) CheckFlannelInterface(w http.ResponseWriter, r *http.Request) {var healthy bool = true
+func (s *Server) CheckFlannelInterface(w http.ResponseWriter, r *http.Request) {
+	var healthy bool = true
 	checkInterface := exec.Command("ifconfig", s.FlannelInterface)
 	var output bytes.Buffer
 	checkInterface.Stdout = &output
@@ -112,6 +113,6 @@ func (s *Server) CheckFlannelInterface(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "FAILED")
 	} else {
 		fmt.Fprintln(w, "OK")
-		s.Logger.Log(fmt.Printf("Healthcheck for flannel interface %s has been successful. Interface is present and configured with ip %s.",s.FlannelInterface,s.FlannelIP))
+		s.Logger.Log(fmt.Printf("Healthcheck for flannel interface %s has been successful. Interface is present and configured with ip %s.", s.FlannelInterface, s.FlannelIP))
 	}
 }

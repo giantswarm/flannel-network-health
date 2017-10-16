@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/flannel-network-health/server"
+	"github.com/giantswarm/micrologger"
 )
 
 var (
@@ -17,19 +17,18 @@ var (
 	source      string = "https://github.com/giantswarm/flannel-network-health"
 )
 
-const ListenOn  = ":8081"
+const ListenOn = ":8081"
 
 func main() {
 	// for architect
 	if os.Args[1] == "version" {
-                println("flannel network health version 0.1")
-                return
-        }
-        if os.Args[1] == "--help" {
-                println("flannel network health version 0.1")
-                return
-        }
-
+		println("flannel network health version 0.1")
+		return
+	}
+	if os.Args[1] == "--help" {
+		println("flannel network health version 0.1")
+		return
+	}
 
 	var err error
 	// Create a new logger which is used by all packages.
@@ -55,7 +54,7 @@ func main() {
 
 	s := server.DefaultConfig()
 	s.Logger = logger
-	if ! s.LoadConfig() {
+	if !s.LoadConfig() {
 		// failed to load config exiting
 		os.Exit(1)
 	}
@@ -65,5 +64,3 @@ func main() {
 	http.HandleFunc("/flannel-healthz", s.CheckFlannelInterface)
 	http.ListenAndServe(ListenOn, nil)
 }
-
-
