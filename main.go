@@ -53,7 +53,10 @@ func mainWithError() error {
 	}
 
 	// wait for flannel file to be created
-	waitForFlannelFile(newLogger)
+	err = waitForFlannelFile(newLogger)
+	if err != nil {
+		return err
+	}
 
 	// We define a server factory to create the custom server once all command
 	// line flags are parsed and all microservice configuration is storted out.
