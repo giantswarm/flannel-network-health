@@ -1,5 +1,5 @@
 hash: 4d4d7528603f788bed3828d31303543f8c213185357e25b454248085faaa5069
-updated: 2017-10-16T16:19:16.135424943+02:00
+updated: 2017-10-17T11:52:05.596677592+02:00
 imports:
 - name: github.com/giantswarm/microerror
   version: 5ade94eb4ee35ef72eb9382228470caeddb29989
@@ -17,4 +17,10 @@ imports:
   version: 08cceb5d0b5331634b9826762a8fd53b29b86ad8
 - name: github.com/kr/logfmt
   version: b84e30acd515aadc4b783ad4ff83aff3299bdfe0
+- name: github.com/vishvananda/netlink
+  version: 177f1ceba557262b3f1c3aba4df93a29199fb4eb
+  subpackages:
+  - nl
+- name: github.com/vishvananda/netns
+  version: 86bef332bfc3b59b7624a600bd53009ce91a9829
 testImports: []

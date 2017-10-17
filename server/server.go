@@ -1,14 +1,13 @@
 package server
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/giantswarm/micrologger"
+	"github.com/vishvananda/netlink"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -67,18 +66,21 @@ func (s *Server) LoadConfig() bool {
 
 func (s *Server) CheckBridgeInterface(w http.ResponseWriter, r *http.Request) {
 	var healthy bool = true
-	checkBridge := exec.Command("ifconfig", s.BridgeInterface)
-	var output bytes.Buffer
-	checkBridge.Stdout = &output
-	err := checkBridge.Run()
+	// load interface
+	bridge, err := netlink.LinkByName(s.BridgeInterface)
 	if err != nil {
 		healthy = false
-		s.Logger.Log(fmt.Printf("Cant find bridge %s. %s", s.BridgeInterface, err.Error()))
+		s.Logger.Log(fmt.Printf("Cant find bridge %s. %s", s.BridgeInterface, err))
 	}
-
-	if !strings.Contains(output.String(), s.BridgeIP) {
+	// check ip on interface
+	ipList, err := netlink.AddrList(bridge, netlink.FAMILY_V4)
+	if err != nil || len(ipList) == 0 {
 		healthy = false
-		s.Logger.Log(fmt.Printf("Wrong or missing ip %s in the bridge configuration.\n%s", s.BridgeIP, output.String()))
+		s.Logger.Log(fmt.Printf("Missing ip %s in the bridge configuration.", s.BridgeIP))
+	}
+	if len(ipList) > 0 && ipList[0].IP.String() != s.BridgeIP {
+		healthy = false
+		s.Logger.Log(fmt.Printf("Wrong ip on interface %s. Expected %s, but found %s.", s.BridgeInterface, s.BridgeIP, ipList[0].IP.String()))
 	}
 
 	// if health check failed set response status to 503
@@ -93,18 +95,21 @@ func (s *Server) CheckBridgeInterface(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) CheckFlannelInterface(w http.ResponseWriter, r *http.Request) {
 	var healthy bool = true
-	checkInterface := exec.Command("ifconfig", s.FlannelInterface)
-	var output bytes.Buffer
-	checkInterface.Stdout = &output
-	err := checkInterface.Run()
+	// load interface
+	flannel, err := netlink.LinkByName(s.FlannelInterface)
 	if err != nil {
 		healthy = false
-		s.Logger.Log(fmt.Printf("Cant find flannel interface %s. %s", s.FlannelInterface, err.Error()))
+		s.Logger.Log(fmt.Printf("Cant find flannel interface %s. %s", s.FlannelInterface, err))
 	}
-
-	if !strings.Contains(output.String(), s.FlannelIP) {
+	// check ip on interface
+	ipList, err := netlink.AddrList(flannel, netlink.FAMILY_V4)
+	if err != nil || len(ipList) == 0 {
 		healthy = false
-		s.Logger.Log(fmt.Printf("Wrong or missing ip %s in the flannel configuration.\n%s", s.FlannelIP, output.String()))
+		s.Logger.Log(fmt.Printf("Missing ip %s in the flannel configuration.", s.FlannelIP))
+	}
+	if len(ipList) > 0 && ipList[0].IP.String() != s.FlannelIP {
+		healthy = false
+		s.Logger.Log(fmt.Printf("Wrong ip on interface %s. Expected %s, but found %s.", s.FlannelInterface, s.FlannelIP, ipList[0].IP.String()))
 	}
 
 	// if health check failed set response status to 503
