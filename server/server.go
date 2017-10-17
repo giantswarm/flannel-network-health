@@ -1,123 +1,123 @@
 package server
 
 import (
-	"fmt"
-	"github.com/giantswarm/micrologger"
-	"github.com/vishvananda/netlink"
-	"io/ioutil"
-	"net"
+	"context"
 	"net/http"
-	"os"
-	"regexp"
-	"strings"
+	"sync"
+
+	"github.com/giantswarm/microerror"
+	microserver "github.com/giantswarm/microkit/server"
+	"github.com/giantswarm/micrologger"
+	kithttp "github.com/go-kit/kit/transport/http"
+
+	"github.com/giantswarm/flannel-network-health/server/endpoint"
+	"github.com/giantswarm/flannel-network-health/server/middleware"
+	"github.com/giantswarm/flannel-network-health/service"
+
 )
 
-type Server struct {
-	Logger           micrologger.Logger
-	BridgeInterface  string
-	FlannelInterface string
-	BridgeIP         string
-	FlannelIP        string
+// Config represents the configuration used to create a new server object.
+type Config struct {
+	// Dependencies.
+	Service *service.Service
+
+	// Settings.
+	MicroServerConfig microserver.Config
 }
 
-func DefaultConfig() *Server {
-	return &Server{}
+// DefaultConfig provides a default configuration to create a new server object
+// by best effort.
+func DefaultConfig() Config {
+	return Config{
+		// Dependencies.
+		Service: nil,
+
+		// Settings.
+		MicroServerConfig: microserver.DefaultConfig(),
+	}
 }
 
-func (s *Server) LoadConfig() bool {
-	// load NIC interfaces from ENV
-	s.BridgeInterface = os.Getenv("NETWORK_BRIDGE_NAME")
-	s.FlannelInterface = os.Getenv("NETWORK_FLANNEL_DEVICE")
-	// read flannel file
-	fileContent, err := ioutil.ReadFile(os.Getenv("NETWORK_ENV_FILE_PATH"))
-	if err != nil {
-		s.Logger.Log(fmt.Printf("Error reading flannel file. %v", err.Error()))
-		return false
-	}
-	// get FLANNEL_SUBNET from flannel file via regexp
-	r, _ := regexp.Compile("FLANNEL_SUBNET=[0-9]+.[0-9]+.[0-9]+.[0-9]+/[0-9]+")
-	flannelLine := r.Find(fileContent)
-	// check if regexp returned non-empty line
-	if len(flannelLine) < 5 {
-		s.Logger.Log(fmt.Print("Unable to find FLANNEL_SUBNET in flannel file"))
-		return false
+// New creates a new configured server object.
+func New(config Config) (microserver.Server, error) {
+	var err error
+
+	var middlewareCollection *middleware.Middleware
+	{
+		middlewareConfig := middleware.DefaultConfig()
+		middlewareConfig.Logger = config.MicroServerConfig.Logger
+		middlewareConfig.Service = config.Service
+		middlewareCollection, err = middleware.New(middlewareConfig)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
 	}
 
-	// parse flannel subnet
-	flannelSubnetStr := strings.Split(string(flannelLine), "=")[1]
-	flannelIP, _, err := net.ParseCIDR(flannelSubnetStr)
-	if err != nil {
-		s.Logger.Log(fmt.Printf("Error when parsing flannel subnet. %v", err.Error()))
-		return false
+	var endpointCollection *endpoint.Endpoint
+	{
+		endpointConfig := endpoint.DefaultConfig()
+		endpointConfig.Logger = config.MicroServerConfig.Logger
+		endpointConfig.Middleware = middlewareCollection
+		endpointConfig.Service = config.Service
+		endpointCollection, err = endpoint.New(endpointConfig)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
 	}
-	// force ipv4 for later trick
-	flannelIP = flannelIP.To4()
 
-	// get flannel ip
-	s.FlannelIP = flannelIP.String()
-	// get bridge ip, which is just one number bigger than flannel hence the [3]++ trick
-	flannelIP[3]++
-	s.BridgeIP = flannelIP.String()
-	// debug output
-	s.Logger.Log(fmt.Printf("Loaded Config: %+v", s))
+	newServer := &server{
+		// Dependencies.
+		logger: config.MicroServerConfig.Logger,
 
-	return true
+		// Internals.
+		bootOnce:     sync.Once{},
+		config:       config.MicroServerConfig,
+		shutdownOnce: sync.Once{},
+	}
+
+	// Apply internals to the micro server config.
+	newServer.config.Endpoints = []microserver.Endpoint{
+		endpointCollection.Healthz,
+		endpointCollection.Version,
+	}
+	newServer.config.ErrorEncoder = newServer.newErrorEncoder()
+
+	return newServer, nil
 }
 
-func (s *Server) CheckBridgeInterface(w http.ResponseWriter, r *http.Request) {
-	var healthy bool = true
-	// load interface
-	bridge, err := netlink.LinkByName(s.BridgeInterface)
-	if err != nil {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Cant find bridge %s. %s", s.BridgeInterface, err))
-	}
-	// check ip on interface
-	ipList, err := netlink.AddrList(bridge, netlink.FAMILY_V4)
-	if err != nil || len(ipList) == 0 {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Missing ip %s in the bridge configuration.", s.BridgeIP))
-	}
-	if len(ipList) > 0 && ipList[0].IP.String() != s.BridgeIP {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Wrong ip on interface %s. Expected %s, but found %s.", s.BridgeInterface, s.BridgeIP, ipList[0].IP.String()))
-	}
+type server struct {
+	// Dependencies.
+	logger micrologger.Logger
 
-	// if health check failed set response status to 503
-	if !healthy {
+	// Internals.
+	bootOnce     sync.Once
+	config       microserver.Config
+	shutdownOnce sync.Once
+}
+
+func (s *server) Boot() {
+	s.bootOnce.Do(func() {
+		// Here goes your custom boot logic for your server/endpoint/middleware, if
+		// any.
+	})
+}
+
+func (s *server) Config() microserver.Config {
+	return s.config
+}
+
+func (s *server) Shutdown() {
+	s.shutdownOnce.Do(func() {
+		// Here goes your custom shutdown logic for your server/endpoint/middleware,
+		// if any.
+	})
+}
+
+func (s *server) newErrorEncoder() kithttp.ErrorEncoder {
+	return func(ctx context.Context, err error, w http.ResponseWriter) {
+		rErr := err.(microserver.ResponseError)
+		rErr.SetCode(microserver.CodeInternalError)
+		rErr.SetMessage("An unexpected error occurred. Sorry for the inconvenience.")
 		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "FAILED")
-	} else {
-		fmt.Fprintln(w, "OK")
-		s.Logger.Log(fmt.Printf("Healthcheck for bridge %s has been successful. Bridge is present and configured with ip %s.", s.BridgeInterface, s.BridgeIP))
 	}
 }
 
-func (s *Server) CheckFlannelInterface(w http.ResponseWriter, r *http.Request) {
-	var healthy bool = true
-	// load interface
-	flannel, err := netlink.LinkByName(s.FlannelInterface)
-	if err != nil {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Cant find flannel interface %s. %s", s.FlannelInterface, err))
-	}
-	// check ip on interface
-	ipList, err := netlink.AddrList(flannel, netlink.FAMILY_V4)
-	if err != nil || len(ipList) == 0 {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Missing ip %s in the flannel configuration.", s.FlannelIP))
-	}
-	if len(ipList) > 0 && ipList[0].IP.String() != s.FlannelIP {
-		healthy = false
-		s.Logger.Log(fmt.Printf("Wrong ip on interface %s. Expected %s, but found %s.", s.FlannelInterface, s.FlannelIP, ipList[0].IP.String()))
-	}
-
-	// if health check failed set response status to 503
-	if !healthy {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintln(w, "FAILED")
-	} else {
-		fmt.Fprintln(w, "OK")
-		s.Logger.Log(fmt.Printf("Healthcheck for flannel interface %s has been successful. Interface is present and configured with ip %s.", s.FlannelInterface, s.FlannelIP))
-	}
-}
