@@ -17,7 +17,6 @@ func IsInvalidFlannelFile(err error) bool {
 	return microerror.Cause(err) == invalidFlannelFile
 }
 
-
 var invalidFlannelConfiguration = microerror.New("Unable to find FLANNEL_SUBNET in flannel file")
 
 func IsInvalidFlannelConfiguration(err error) bool {

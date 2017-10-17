@@ -1,6 +1,5 @@
 package interfaceHealthz
 
-
 import (
 	"context"
 	"fmt"
@@ -9,10 +8,10 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 
-	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz/interface"
-	"github.com/vishvananda/netlink"
 	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz/key"
+	"github.com/giantswarm/microendpoint/service/healthz"
+	"github.com/vishvananda/netlink"
 )
 
 const (
@@ -27,7 +26,7 @@ const (
 type Config struct {
 	// Dependencies.
 	NetworkInterface _interface.NetworkInterface
-	Logger    micrologger.Logger
+	Logger           micrologger.Logger
 }
 
 // DefaultConfig provides a default configuration to create a new healthz service
@@ -36,7 +35,7 @@ func DefaultConfig() Config {
 	return Config{
 		// Dependencies.
 		NetworkInterface: _interface.NetworkInterface{},
-		Logger:    nil,
+		Logger:           nil,
 	}
 }
 
@@ -44,7 +43,7 @@ func DefaultConfig() Config {
 type Service struct {
 	// Dependencies.
 	networkInterface _interface.NetworkInterface
-	logger    micrologger.Logger
+	logger           micrologger.Logger
 
 	// Settings.
 	timeout time.Duration
@@ -63,11 +62,10 @@ func New(config Config) (*Service, error) {
 		return nil, microerror.Maskf(invalidConfigError, "config.Logger must not be empty")
 	}
 
-
 	newService := &Service{
 		// Dependencies.
 		networkInterface: config.NetworkInterface,
-		logger:    config.Logger,
+		logger:           config.Logger,
 	}
 
 	return newService, nil
@@ -75,7 +73,7 @@ func New(config Config) (*Service, error) {
 
 // GetHealthz implements the health check for network interface.
 func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
-	message := fmt.Sprintf("Healthcheck for interface %s has been successful. Interface is present and configured with ip %s.",s.networkInterface.Name,s.networkInterface.IP)
+	message := fmt.Sprintf("Healthcheck for interface %s has been successful. Interface is present and configured with ip %s.", s.networkInterface.Name, s.networkInterface.IP)
 
 	failed, message := s.healthCheck(message)
 
@@ -88,8 +86,9 @@ func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
 
 	return response, nil
 }
+
 // implementation fo the interface healthz logic
-func (s *Service) healthCheck(message string) (bool, string){
+func (s *Service) healthCheck(message string) (bool, string) {
 	// load interface
 	bridge, err := netlink.LinkByName(s.networkInterface.Name)
 	if err != nil {
@@ -103,7 +102,7 @@ func (s *Service) healthCheck(message string) (bool, string){
 		return true, message
 	}
 	// compare ip on interface
-	if len(ipList) > 0 &&  key.GetInterfaceIP(ipList) != s.networkInterface.IP {
+	if len(ipList) > 0 && key.GetInterfaceIP(ipList) != s.networkInterface.IP {
 		message = fmt.Sprintf("Wrong ip on interface %s. Expected %s, but found %s.", s.networkInterface.Name, s.networkInterface.IP, key.GetInterfaceIP(ipList))
 		return true, message
 	}

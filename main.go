@@ -2,28 +2,27 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"time"
+	"github.com/giantswarm/flannel-network-health/flag"
 	"github.com/giantswarm/flannel-network-health/server"
 	"github.com/giantswarm/flannel-network-health/service"
-	"github.com/giantswarm/flannel-network-health/flag"
-	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/microkit/command"
 	microserver "github.com/giantswarm/microkit/server"
+	"github.com/giantswarm/micrologger"
 	"github.com/spf13/viper"
+	"os"
+	"time"
 )
 
 var (
-	f *flag.Flag = flag.New()
-	description string = "Flannel-network-health serves as health endpoint for network configuration created by flannel-operator."
-	gitCommit   string = "n/a"
-	name        string = "flannel-network-health"
-	source      string = "https://github.com/giantswarm/flannel-network-health"
+	f           *flag.Flag = flag.New()
+	description string     = "Flannel-network-health serves as health endpoint for network configuration created by flannel-operator."
+	gitCommit   string     = "n/a"
+	name        string     = "flannel-network-health"
+	source      string     = "https://github.com/giantswarm/flannel-network-health"
 )
 
 const (
-	ListenOn = ":8081"
 	MaxRetry = 100
 )
 
@@ -34,13 +33,12 @@ func main() {
 	}
 }
 
-func mainWithError() (error){
+func mainWithError() error {
 	// for architect
 	if len(os.Args) > 1 && (os.Args[1] == "version" || os.Args[1] == "--help") {
 		println("flannel network health version 0.1")
 		return nil
 	}
-
 
 	var err error
 	// Create a new logger which is used by all packages.
@@ -122,7 +120,6 @@ func mainWithError() (error){
 
 	return nil
 }
-
 
 func waitForFlannelFile(newLogger micrologger.Logger) error {
 	var flannelFile string = os.Getenv("NETWORK_ENV_FILE_PATH")

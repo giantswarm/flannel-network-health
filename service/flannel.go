@@ -2,12 +2,12 @@ package service
 
 import (
 	"fmt"
-	"regexp"
-	"os"
-	"io/ioutil"
 	"github.com/giantswarm/microerror"
-	"strings"
+	"io/ioutil"
 	"net"
+	"os"
+	"regexp"
+	"strings"
 )
 
 func (c *Config) LoadFlannelConfig() error {
@@ -25,6 +25,7 @@ func (c *Config) LoadFlannelConfig() error {
 
 	return nil
 }
+
 // fetch ENVs values and read flannel file
 func (c *Config) fetchConfFromOS() ([]byte, error) {
 	// load NIC interfaces from ENV
@@ -34,15 +35,14 @@ func (c *Config) fetchConfFromOS() ([]byte, error) {
 	filename := os.Getenv("NETWORK_ENV_FILE_PATH")
 	fileContent, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, microerror.Maskf(invalidFlannelFile, "%s",filename)
+		return nil, microerror.Maskf(invalidFlannelFile, "%s", filename)
 	}
 
 	return fileContent, nil
 }
 
-
 // parse flannel configuration file and generate ips for interface
-func (c *Config) parseIPs(confFile []byte) (error){
+func (c *Config) parseIPs(confFile []byte) error {
 
 	// get FLANNEL_SUBNET from flannel file via regexp
 	r, _ := regexp.Compile("FLANNEL_SUBNET=[0-9]+.[0-9]+.[0-9]+.[0-9]+/[0-9]+")
@@ -56,7 +56,7 @@ func (c *Config) parseIPs(confFile []byte) (error){
 	flannelSubnetStr := strings.Split(string(flannelLine), "=")[1]
 	flannelIP, _, err := net.ParseCIDR(flannelSubnetStr)
 	if err != nil {
-		return microerror.Maskf(errorParsingFLannelSubnet, "%v",err)
+		return microerror.Maskf(errorParsingFLannelSubnet, "%v", err)
 	}
 	// force ipv4 for later trick
 	flannelIP = flannelIP.To4()
@@ -71,4 +71,3 @@ func (c *Config) parseIPs(confFile []byte) (error){
 
 	return nil
 }
-

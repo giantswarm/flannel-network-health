@@ -1,17 +1,17 @@
 package operator
 
 import (
-"sync"
-"time"
+	"sync"
+	"time"
 
-"github.com/giantswarm/microerror"
-"github.com/giantswarm/micrologger"
+	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 )
 
 // Config represents the configuration used to create a new service.
 type Config struct {
 	// Dependencies.
-	Logger            micrologger.Logger
+	Logger micrologger.Logger
 }
 
 // DefaultConfig provides a default configuration to create a new service by
@@ -19,18 +19,18 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		// Dependencies.
-		Logger:            nil,
+		Logger: nil,
 	}
 }
 
 // Service implements the operator service.
 type Service struct {
 	// Dependencies.
-	logger            micrologger.Logger
+	logger micrologger.Logger
 
 	// Internals.
-	bootOnce       sync.Once
-	mutex          sync.Mutex
+	bootOnce sync.Once
+	mutex    sync.Mutex
 }
 
 // New creates a new configured service.
@@ -42,11 +42,11 @@ func New(config Config) (*Service, error) {
 
 	newService := &Service{
 		// Dependencies.
-		logger:            config.Logger,
+		logger: config.Logger,
 
 		// Internals
-		bootOnce:       sync.Once{},
-		mutex:          sync.Mutex{},
+		bootOnce: sync.Once{},
+		mutex:    sync.Mutex{},
 	}
 
 	return newService, nil
@@ -57,8 +57,8 @@ func (s *Service) Boot() {
 	s.bootOnce.Do(func() {
 		// dummy  operator wait
 		s.logger.Log("Dummy operator boot.")
-		for ;; {
-			time.Sleep(1*time.Hour)
+		for {
+			time.Sleep(1 * time.Hour)
 		}
 
 	})

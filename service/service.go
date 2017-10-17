@@ -2,12 +2,12 @@ package service
 
 import (
 	"github.com/giantswarm/flannel-network-health/flag"
+	"github.com/giantswarm/flannel-network-health/service/healthz"
+	"github.com/giantswarm/flannel-network-health/service/operator"
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"sync"
-	"github.com/giantswarm/flannel-network-health/service/healthz"
-	"github.com/giantswarm/flannel-network-health/service/operator"
 )
 
 // Config represents the configuration used to create a new service.
@@ -16,7 +16,7 @@ type Config struct {
 	Logger micrologger.Logger
 
 	// Settings.
-	Flag  *flag.Flag
+	Flag *flag.Flag
 
 	Description string
 	GitCommit   string
@@ -32,7 +32,7 @@ func DefaultConfig() Config {
 		Logger: nil,
 
 		// Settings.
-		Flag:  nil,
+		Flag: nil,
 
 		Description: "",
 		GitCommit:   "",

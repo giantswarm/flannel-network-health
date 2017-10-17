@@ -1,18 +1,18 @@
 package healthz
 
 import (
-"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz"
-"github.com/giantswarm/microendpoint/service/healthz"
-"github.com/giantswarm/microerror"
-"github.com/giantswarm/micrologger"
-"github.com/giantswarm/flannel-network-health/flag/service/network"
+	"github.com/giantswarm/flannel-network-health/flag/service/network"
+	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz"
+	"github.com/giantswarm/microendpoint/service/healthz"
+	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 )
 
 // Config represents the configuration used to create a healthz service.
 type Config struct {
 	// Dependencies.
 	NetworkConfig network.Network
-	Logger    micrologger.Logger
+	Logger        micrologger.Logger
 }
 
 // DefaultConfig provides a default configuration to create a new healthz
@@ -21,7 +21,7 @@ func DefaultConfig() Config {
 	return Config{
 		// Dependencies.
 		NetworkConfig: network.Network{},
-		Logger:    nil,
+		Logger:        nil,
 	}
 }
 

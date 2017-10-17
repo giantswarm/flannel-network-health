@@ -1,7 +1,7 @@
 package operator
 
 import (
-"github.com/giantswarm/microerror"
+	"github.com/giantswarm/microerror"
 )
 
 var invalidConfigError = microerror.New("invalid config")

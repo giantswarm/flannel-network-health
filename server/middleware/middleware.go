@@ -1,6 +1,5 @@
 package middleware
 
-
 import (
 	"github.com/giantswarm/micrologger"
 

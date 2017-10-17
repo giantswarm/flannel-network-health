@@ -13,7 +13,6 @@ import (
 	"github.com/giantswarm/flannel-network-health/server/endpoint"
 	"github.com/giantswarm/flannel-network-health/server/middleware"
 	"github.com/giantswarm/flannel-network-health/service"
-
 )
 
 // Config represents the configuration used to create a new server object.
@@ -120,4 +119,3 @@ func (s *server) newErrorEncoder() kithttp.ErrorEncoder {
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
-
