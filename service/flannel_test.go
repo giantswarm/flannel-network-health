@@ -2,8 +2,6 @@ package service
 
 import (
 	"testing"
-
-	"fmt"
 	"github.com/giantswarm/flannel-network-health/flag"
 	"github.com/giantswarm/flannel-network-health/flag/service/network"
 	"github.com/giantswarm/microerror"
