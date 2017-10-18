@@ -1,11 +1,11 @@
 package service
 
 import (
-	"testing"
 	"github.com/giantswarm/flannel-network-health/flag"
 	"github.com/giantswarm/flannel-network-health/flag/service/network"
 	"github.com/giantswarm/microerror"
 	"strings"
+	"testing"
 )
 
 func Test_Flannel_ParseIP(t *testing.T) {
