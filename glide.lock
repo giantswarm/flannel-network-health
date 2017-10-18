@@ -1,5 +1,5 @@
 hash: 4d4d7528603f788bed3828d31303543f8c213185357e25b454248085faaa5069
-updated: 2017-10-18T09:22:19.906162274+02:00
+updated: 2017-10-18T13:29:06.623778025+02:00
 imports:
 - name: github.com/beorn7/perks
   version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
@@ -17,7 +17,7 @@ imports:
 - name: github.com/giantswarm/microerror
   version: 5ade94eb4ee35ef72eb9382228470caeddb29989
 - name: github.com/giantswarm/microkit
-  version: 4871f763488a16c5b7ea3c411bbd82cd5139e29a
+  version: e6c3aafd2c6b8298599dc465dc1294fbd025d2f1
   subpackages:
   - command
   - command/daemon
