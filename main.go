@@ -52,15 +52,14 @@ func mainWithError() error {
 		}
 	}
 
-	// wait for flannel file to be created
-	err = waitForFlannelFile(newLogger)
-	if err != nil {
-		return err
-	}
-
 	// We define a server factory to create the custom server once all command
 	// line flags are parsed and all microservice configuration is storted out.
 	newServerFactory := func(v *viper.Viper) microserver.Server {
+		// wait for flannel file to be created
+		err = waitForFlannelFile(newLogger)
+		if err != nil {
+			panic(err)
+		}
 		// Create a new custom service which implements business logic.
 		var newService *service.Service
 		{
@@ -167,7 +166,7 @@ func waitForFlannelFile(newLogger micrologger.Logger) error {
 		if _, err := os.Stat(flannelFile); !os.IsNotExist(err) {
 			break
 		}
-		newLogger.Log(fmt.Sprintf("Waiting for file %s to be created.", flannelFile))
+		newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", flannelFile))
 		time.Sleep(1 * time.Second)
 	}
 	// all good
