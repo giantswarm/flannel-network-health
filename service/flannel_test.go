@@ -23,7 +23,7 @@ func Test_Flannel_ParseIP(t *testing.T) {
 				err := conf.parseIPs(flannelFile)
 				return conf.Flag.Service.NetworkConfig, err
 			},
-			expectedConfig: network.Network{FlannelIP: "172.23.3.65", BridgeIP: "172.23.3.66"},
+			expectedConfig: network.Network{FlannelIP: "172.23.3.64", BridgeIP: "172.23.3.65"},
 			flannelFileContent: []byte(`FLANNEL_NETWORK=172.23.3.0/24
 FLANNEL_SUBNET=172.23.3.65/30
 FLANNEL_MTU=1450
@@ -39,8 +39,8 @@ FLANNEL_IPMASQ=false`),
 				return conf.Flag.Service.NetworkConfig, err
 			},
 			expectedConfig: network.Network{FlannelIP: "198.168.0.0", BridgeIP: "198.168.0.1"},
-			flannelFileContent: []byte(`FLANNEL_NETWORK=19*.168.0.0/24
-FLANNEL_SUBNET=198.168.0.0/30
+			flannelFileContent: []byte(`FLANNEL_NETWORK=198.168.0.0/24
+FLANNEL_SUBNET=198.168.0.1/30
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=false`),
 			expectedErr: nil,
