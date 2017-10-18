@@ -22,7 +22,8 @@ func (c *Config) LoadFlannelConfig() error {
 	if err != nil {
 		return microerror.Mask(err)
 	}
-
+	// debug output
+	c.Logger.Log("Loaded Config:",fmt.Sprintf("%+v", c.Flag.Service.NetworkConfig))
 	return nil
 }
 
@@ -66,8 +67,6 @@ func (c *Config) parseIPs(confFile []byte) error {
 	// get bridge ip, which is just one number bigger than flannel hence the [3]++ trick
 	flannelIP[3]++
 	c.Flag.Service.NetworkConfig.BridgeIP = flannelIP.String()
-	// debug output
-	c.Logger.Log(fmt.Printf("Loaded Config: %+v", c.Flag.Service.NetworkConfig))
 
 	return nil
 }

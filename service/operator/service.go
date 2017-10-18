@@ -56,7 +56,7 @@ func New(config Config) (*Service, error) {
 func (s *Service) Boot() {
 	s.bootOnce.Do(func() {
 		// dummy  operator wait
-		s.logger.Log("Dummy operator boot.")
+		s.logger.Log("Boot","Dummy operator boot.")
 		for {
 			time.Sleep(1 * time.Hour)
 		}

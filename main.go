@@ -8,9 +8,14 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/microkit/command"
 	microserver "github.com/giantswarm/microkit/server"
+	"github.com/giantswarm/microkit/transaction"
 	"github.com/giantswarm/micrologger"
+	"github.com/giantswarm/microstorage"
+	"github.com/giantswarm/microstorage/memory"
 	"github.com/spf13/viper"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,7 +28,8 @@ var (
 )
 
 const (
-	MaxRetry = 100
+	MaxRetry       = 100
+	ListenPortBase = 21000
 )
 
 func main() {
@@ -34,12 +40,6 @@ func main() {
 }
 
 func mainWithError() error {
-	// for architect
-	if len(os.Args) > 1 && (os.Args[1] == "version" || os.Args[1] == "--help") {
-		println("flannel network health version 0.1")
-		return nil
-	}
-
 	var err error
 	// Create a new logger which is used by all packages.
 	var newLogger micrologger.Logger
@@ -81,6 +81,34 @@ func mainWithError() error {
 			go newService.Boot()
 		}
 
+		var storage microstorage.Storage
+		{
+			storage, err = memory.New(memory.DefaultConfig())
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		var transactionResponder transaction.Responder
+		{
+			c := transaction.DefaultResponderConfig()
+			c.Logger = newLogger
+			c.Storage = storage
+
+			transactionResponder, err = transaction.NewResponder(c)
+			if err != nil {
+				panic(err)
+			}
+		}
+
+		var listenAddress string
+		{
+			listenAddress, err = buildListenAddress()
+			if err != nil {
+				panic(err)
+			}
+		}
+
 		// Create a new custom server which bundles our endpoints.
 		var newServer microserver.Server
 		{
@@ -88,8 +116,11 @@ func mainWithError() error {
 
 			serverConfig.MicroServerConfig.Logger = newLogger
 			serverConfig.MicroServerConfig.ServiceName = name
+			serverConfig.MicroServerConfig.TransactionResponder = transactionResponder
 			serverConfig.MicroServerConfig.Viper = v
+			serverConfig.MicroServerConfig.ListenAddress = listenAddress
 			serverConfig.Service = newService
+
 
 			newServer, err = server.New(serverConfig)
 			if err != nil {
@@ -142,4 +173,16 @@ func waitForFlannelFile(newLogger micrologger.Logger) error {
 	}
 	// all good
 	return nil
+}
+
+func buildListenAddress() (string, error) {
+	vniStr := strings.Split(os.Getenv("NETWORK_FLANNEL_DEVICE"), ".")[1]
+	vni, err := strconv.Atoi(vniStr)
+	if err != nil {
+		return "", microerror.Maskf(err, "Failed to parse VNI from flannel device %s", vniStr)
+	}
+	listenPort := ListenPortBase + vni
+	listenAddress := "http://127.0.0.1:" + strconv.Itoa(listenPort)
+
+	return listenAddress, nil
 }

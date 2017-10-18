@@ -81,7 +81,7 @@ func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
 		Description: Description,
 		Failed:      failed,
 		Message:     message,
-		Name:        Name,
+		Name:        Name + " " + s.networkInterface.Name,
 	}
 
 	return response, nil
@@ -98,7 +98,7 @@ func (s *Service) healthCheck(message string) (bool, string) {
 	// check ip on interface
 	ipList, err := netlink.AddrList(bridge, netlink.FAMILY_V4)
 	if err != nil || len(ipList) == 0 {
-		message = fmt.Sprintf("Missing ip %s in the bridge configuration.", s.networkInterface.IP)
+		message = fmt.Sprintf("Missing ip %s on the interface %s.", s.networkInterface.IP, s.networkInterface.Name)
 		return true, message
 	}
 	// compare ip on interface

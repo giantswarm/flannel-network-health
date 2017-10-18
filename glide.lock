@@ -1,5 +1,5 @@
 hash: 4d4d7528603f788bed3828d31303543f8c213185357e25b454248085faaa5069
-updated: 2017-10-17T14:10:25.076775243+02:00
+updated: 2017-10-18T09:22:19.906162274+02:00
 imports:
 - name: github.com/beorn7/perks
   version: 4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9
@@ -10,6 +10,9 @@ imports:
 - name: github.com/giantswarm/microendpoint
   version: 1ea4d8cd5f0167625f134c855ae42fc747191890
   subpackages:
+  - endpoint/healthz
+  - endpoint/version
+  - service/healthz
   - service/version
 - name: github.com/giantswarm/microerror
   version: 5ade94eb4ee35ef72eb9382228470caeddb29989
@@ -56,7 +59,7 @@ imports:
 - name: github.com/gorilla/mux
   version: 0eeaf8392f5b04950925b8a69fe70f110fa7cbfc
 - name: github.com/hashicorp/hcl
-  version: 42e33e2d55a0ff1d6263f738896ea8c13571a8d0
+  version: 23c074d0eceb2b8a5bfdbb271ab780cde70f05a8
   subpackages:
   - hcl/ast
   - hcl/parser
@@ -79,11 +82,9 @@ imports:
   subpackages:
   - pbutil
 - name: github.com/mitchellh/mapstructure
-  version: d0303fe809921458f417bcf828397a65db30a7e4
+  version: 06020f85339e21b2478f756a78e295255ffa4d6a
 - name: github.com/pelletier/go-toml
   version: 2009e44b6f182e34d8ce081ac2767622937ea3d4
-- name: github.com/pkg/errors
-  version: 2b3a18b5f0fb6b4f9190549597d3f962c02bc5eb
 - name: github.com/prometheus/client_golang
   version: 5cec1d0429b02e4323e042eb04dafdb079ddf568
   subpackages:
@@ -100,7 +101,7 @@ imports:
   - internal/bitbucket.org/ww/goautoneg
   - model
 - name: github.com/prometheus/procfs
-  version: e645f4e5aaa8506fc71d6edbc5c4ff02c04c46f2
+  version: a6e9df898b1336106c743392c48ee0b71f5c4efa
   subpackages:
   - xfs
 - name: github.com/spf13/afero

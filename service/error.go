@@ -23,7 +23,7 @@ func IsInvalidFlannelConfiguration(err error) bool {
 	return microerror.Cause(err) == invalidFlannelConfiguration
 }
 
-var errorParsingFLannelSubnet = microerror.New("Unable to find FLANNEL_SUBNET in flannel file")
+var errorParsingFLannelSubnet = microerror.New("Error when parsing Subnet in flannel file")
 
 func IsErrorParsingFLannelSubnet(err error) bool {
 	return microerror.Cause(err) == errorParsingFLannelSubnet
