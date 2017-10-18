@@ -121,7 +121,6 @@ func mainWithError() error {
 			serverConfig.MicroServerConfig.ListenAddress = listenAddress
 			serverConfig.Service = newService
 
-
 			newServer, err = server.New(serverConfig)
 			if err != nil {
 				panic(err)

@@ -23,7 +23,7 @@ func (c *Config) LoadFlannelConfig() error {
 		return microerror.Mask(err)
 	}
 	// debug output
-	c.Logger.Log("Loaded Config:",fmt.Sprintf("%+v", c.Flag.Service.NetworkConfig))
+	c.Logger.Log("debug", fmt.Sprintf("Loaded Config: %+v", c.Flag.Service.NetworkConfig))
 	return nil
 }
 
