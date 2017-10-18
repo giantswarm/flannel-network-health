@@ -3,10 +3,10 @@ package service
 import (
 	"testing"
 
-	"github.com/giantswarm/flannel-network-health/flag/service/network"
-	"github.com/giantswarm/microerror"
 	"fmt"
 	"github.com/giantswarm/flannel-network-health/flag"
+	"github.com/giantswarm/flannel-network-health/flag/service/network"
+	"github.com/giantswarm/microerror"
 	"strings"
 )
 
@@ -21,7 +21,7 @@ func Test_Flannel_ParseIP(t *testing.T) {
 		{
 			config: func(flannelFile []byte) (network.Network, error) {
 				conf := DefaultConfig()
-				conf.Flag  = flag.New()
+				conf.Flag = flag.New()
 				err := conf.parseIPs(flannelFile)
 				return conf.Flag.Service.NetworkConfig, err
 			},
@@ -36,7 +36,7 @@ FLANNEL_IPMASQ=false`),
 		{
 			config: func(flannelFile []byte) (network.Network, error) {
 				conf := DefaultConfig()
-				conf.Flag  = flag.New()
+				conf.Flag = flag.New()
 				err := conf.parseIPs(flannelFile)
 				return conf.Flag.Service.NetworkConfig, err
 			},
@@ -51,11 +51,11 @@ FLANNEL_IPMASQ=false`),
 		{
 			config: func(flannelFile []byte) (network.Network, error) {
 				conf := DefaultConfig()
-				conf.Flag  = flag.New()
+				conf.Flag = flag.New()
 				err := conf.parseIPs(flannelFile)
 				return conf.Flag.Service.NetworkConfig, err
 			},
-			expectedConfig: network.Network{FlannelIP: "192.168.0.0", BridgeIP: "192.168.0.1"},
+			expectedConfig: network.Network{},
 			flannelFileContent: []byte(`FLANNEL_NETWORK=192.168.0.0/24
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=false`),
@@ -65,11 +65,11 @@ FLANNEL_IPMASQ=false`),
 		{
 			config: func(flannelFile []byte) (network.Network, error) {
 				conf := DefaultConfig()
-				conf.Flag  = flag.New()
+				conf.Flag = flag.New()
 				err := conf.parseIPs(flannelFile)
 				return conf.Flag.Service.NetworkConfig, err
 			},
-			expectedConfig: network.Network{FlannelIP: "198.168.0.0", BridgeIP: "19*.168.0.1"},
+			expectedConfig: network.Network{},
 			flannelFileContent: []byte(`FLANNEL_NETWORK=198.168.0.0/24
 FLANNEL_SUBNET=_x.68.c.0/30
 FLANNEL_MTU=1450
