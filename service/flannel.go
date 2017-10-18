@@ -62,11 +62,11 @@ func (c *Config) parseIPs(confFile []byte) error {
 	// force ipv4 for later trick
 	flannelIP = flannelIP.To4()
 
-	// get flannel ip
-	c.Flag.Service.NetworkConfig.FlannelIP = flannelIP.String()
-	// get bridge ip, which is just one number bigger than flannel hence the [3]++ trick
-	flannelIP[3]++
+	// get bridge ip
 	c.Flag.Service.NetworkConfig.BridgeIP = flannelIP.String()
+	// get flannel ip,, which is just one number smaller than bridge hence the [3]++ trick
+	flannelIP[3]--
+	c.Flag.Service.NetworkConfig.FlannelIP = flannelIP.String()
 
 	return nil
 }
