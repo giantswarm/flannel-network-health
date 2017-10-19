@@ -77,7 +77,6 @@ func mainWithError() error {
 			if err != nil {
 				panic(err)
 			}
-			go newService.Boot()
 		}
 
 		var storage microstorage.Storage

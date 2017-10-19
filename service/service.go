@@ -3,7 +3,6 @@ package service
 import (
 	"github.com/giantswarm/flannel-network-health/flag"
 	"github.com/giantswarm/flannel-network-health/service/healthz"
-	"github.com/giantswarm/flannel-network-health/service/operator"
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -72,18 +71,6 @@ func New(config Config) (*Service, error) {
 		}
 	}
 
-	var operatorService *operator.Service
-	{
-		operatorConfig := operator.DefaultConfig()
-
-		operatorConfig.Logger = config.Logger
-
-		operatorService, err = operator.New(operatorConfig)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-	}
-
 	var versionService *version.Service
 	{
 		versionConfig := version.DefaultConfig()
@@ -102,7 +89,6 @@ func New(config Config) (*Service, error) {
 	newService := &Service{
 		// Dependencies.
 		Healthz:  healthzService,
-		Operator: operatorService,
 		Version:  versionService,
 
 		// Internals
@@ -115,15 +101,8 @@ func New(config Config) (*Service, error) {
 type Service struct {
 	// Dependencies.
 	Healthz  *healthz.Service
-	Operator *operator.Service
 	Version  *version.Service
 
 	// Internals.
 	bootOnce sync.Once
-}
-
-func (s *Service) Boot() {
-	s.bootOnce.Do(func() {
-		s.Operator.Boot()
-	})
 }
