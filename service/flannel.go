@@ -3,14 +3,25 @@ package service
 import (
 	"fmt"
 	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 	"io/ioutil"
 	"net"
 	"os"
 	"regexp"
 	"strings"
+	"time"
+)
+
+const (
+	MaxRetry = 100
 )
 
 func (c *Config) LoadFlannelConfig() error {
+	err := waitForFlannelFile(c.Logger)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
 	// fetch configuration from OS env
 	confFile, err := c.fetchConfFromOS()
 	if err != nil {
@@ -68,5 +79,25 @@ func (c *Config) parseIPs(confFile []byte) error {
 	flannelIP[3]--
 	c.Flag.Service.NetworkConfig.FlannelIP = flannelIP.String()
 
+	return nil
+}
+
+// wait for flannel file
+func waitForFlannelFile(newLogger micrologger.Logger) error {
+	var flannelFile string = os.Getenv("NETWORK_ENV_FILE_PATH")
+	// wait for file creation
+	for count := 0; ; count++ {
+		// don't wait forever, if file is not created within retry limit, exit with failure
+		if count > MaxRetry {
+			return microerror.Maskf(invalidFlannelFileError, "After 100sec flannel file is not created. Exiting")
+		}
+		// check if file exists
+		if _, err := os.Stat(flannelFile); !os.IsNotExist(err) {
+			break
+		}
+		newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", flannelFile))
+		time.Sleep(1 * time.Second)
+	}
+	// all good
 	return nil
 }
