@@ -114,14 +114,14 @@ dependencies:
 		networkConfig, err := test.config(test.flannelFileContent)
 
 		if microerror.Cause(err) != microerror.Cause(test.expectedErr) {
-			t.Fatalf("%v: unexcepted error, expected %v but got %v", index, test.expectedErr, err)
+			t.Fatalf("%d: unexcepted error, expected %#v but got %#v", index, test.expectedErr, err)
 		}
 		if test.expectedErr == nil {
 			if strings.Compare(networkConfig.FlannelIP, test.expectedConfig.FlannelIP) != 0 {
-				t.Fatalf("%v: Incorrent ip, expected %v but got %v.", index, test.expectedConfig.FlannelIP, networkConfig.FlannelIP)
+				t.Fatalf("%d: Incorrent ip, expected %s but got %s.", index, test.expectedConfig.FlannelIP, networkConfig.FlannelIP)
 			}
 			if strings.Compare(networkConfig.BridgeIP, test.expectedConfig.BridgeIP) != 0 {
-				t.Fatalf("%v: Incorrent ip, expected %v but got %v.", index, test.expectedConfig.BridgeIP, networkConfig.BridgeIP)
+				t.Fatalf("%d: Incorrent ip, expected %s but got %s.", index, test.expectedConfig.BridgeIP, networkConfig.BridgeIP)
 			}
 		}
 	}
