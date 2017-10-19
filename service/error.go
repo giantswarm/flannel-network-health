@@ -17,14 +17,14 @@ func IsInvalidFlannelFile(err error) bool {
 	return microerror.Cause(err) == invalidFlannelFileError
 }
 
-var invalidFlannelConfigurationError = microerror.New("Unable to find FLANNEL_SUBNET in flannel file")
+var invalidFlannelConfigurationError = microerror.New("invalid flannel configuration")
 
 func IsInvalidFlannelConfiguration(err error) bool {
 	return microerror.Cause(err) == invalidFlannelConfigurationError
 }
 
-var parsingFlannelSubnetError = microerror.New("parsing flannel file")
+var failedParsingFlannelSubnetError = microerror.New("failed parsing flannel file")
 
 func IsParsingFlannelSubnet(err error) bool {
-	return microerror.Cause(err) == parsingFlannelSubnetError
+	return microerror.Cause(err) == failedParsingFlannelSubnetError
 }

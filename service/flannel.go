@@ -62,7 +62,7 @@ func (c *Config) parseIPs(confFile []byte) error {
 	flannelSubnetStr := strings.Split(string(flannelLine), "=")[1]
 	flannelIP, _, err := net.ParseCIDR(flannelSubnetStr)
 	if err != nil {
-		return microerror.Maskf(parsingFlannelSubnetError, "%v", err)
+		return microerror.Maskf(failedParsingFlannelSubnetError, "%v", err)
 	}
 	// force ipv4 for later trick
 	flannelIP = flannelIP.To4()
