@@ -11,20 +11,20 @@ func IsInvalidConfig(err error) bool {
 	return microerror.Cause(err) == invalidConfigError
 }
 
-var invalidFlannelFile = microerror.New("Error reading flannel file")
+var invalidFlannelFileError = microerror.New("invalid flannel file")
 
 func IsInvalidFlannelFile(err error) bool {
-	return microerror.Cause(err) == invalidFlannelFile
+	return microerror.Cause(err) == invalidFlannelFileError
 }
 
-var invalidFlannelConfiguration = microerror.New("Unable to find FLANNEL_SUBNET in flannel file")
+var invalidFlannelConfigurationError = microerror.New("Unable to find FLANNEL_SUBNET in flannel file")
 
 func IsInvalidFlannelConfiguration(err error) bool {
-	return microerror.Cause(err) == invalidFlannelConfiguration
+	return microerror.Cause(err) == invalidFlannelConfigurationError
 }
 
-var errorParsingFLannelSubnet = microerror.New("Error when parsing Subnet in flannel file")
+var parsingFlannelSubnetError = microerror.New("parsing flannel file")
 
-func IsErrorParsingFLannelSubnet(err error) bool {
-	return microerror.Cause(err) == errorParsingFLannelSubnet
+func IsParsingFlannelSubnet(err error) bool {
+	return microerror.Cause(err) == parsingFlannelSubnetError
 }

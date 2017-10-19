@@ -36,7 +36,7 @@ func (c *Config) fetchConfFromOS() ([]byte, error) {
 	filename := os.Getenv("NETWORK_ENV_FILE_PATH")
 	fileContent, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, microerror.Maskf(invalidFlannelFile, "%s", filename)
+		return nil, microerror.Maskf(invalidFlannelFileError, "%s", filename)
 	}
 
 	return fileContent, nil
@@ -50,14 +50,14 @@ func (c *Config) parseIPs(confFile []byte) error {
 	flannelLine := r.Find(confFile)
 	// check if regexp returned non-empty line
 	if len(flannelLine) < 5 {
-		return microerror.Mask(invalidFlannelConfiguration)
+		return microerror.Mask(invalidFlannelConfigurationError)
 	}
 
 	// parse flannel subnet
 	flannelSubnetStr := strings.Split(string(flannelLine), "=")[1]
 	flannelIP, _, err := net.ParseCIDR(flannelSubnetStr)
 	if err != nil {
-		return microerror.Maskf(errorParsingFLannelSubnet, "%v", err)
+		return microerror.Maskf(parsingFlannelSubnetError, "%v", err)
 	}
 	// force ipv4 for later trick
 	flannelIP = flannelIP.To4()
