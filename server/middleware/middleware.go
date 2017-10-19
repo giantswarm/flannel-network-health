@@ -23,11 +23,13 @@ func DefaultConfig() Config {
 	}
 }
 
+// Middleware is middleware collection.
+type Middleware struct {
+}
+
+
 // New creates a new configured middleware.
 func New(config Config) (*Middleware, error) {
 	return &Middleware{}, nil
 }
 
-// Middleware is middleware collection.
-type Middleware struct {
-}
