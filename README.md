@@ -1,12 +1,10 @@
+[![CircleCI](https://circleci.com/gh/giantswarm/flannel-network-health/tree/master.svg?style=shield)](https://circleci.com/gh/giantswarm/flannel-network-health/tree/master)
 # flannel-network-health
-
-[![Build Status](https://api.travis-ci.org/giantswarm/example-opensource-repo.svg)](https://travis-ci.org/giantswarm/example-opensource-repo) [![Go Report Card](https://goreportcard.com/badge/github.com/giantswarm/example-opensource-repo)](https://goreportcard.com/report/github.com/giantswarm/example-opensource-repo) [![](https://godoc.org/github.com/giantswarm/example-opensource-repo?status.svg)](http://godoc.org/github.com/giantswarm/example-opensource-repo) [![](https://img.shields.io/docker/pulls/giantswarm/example-opensource-repo.svg)](http://hub.docker.com/giantswarm/example-opensource-repo) [![IRC Channel](https://img.shields.io/badge/irc-%23giantswarm-blue.svg)](https://kiwiirc.com/client/irc.freenode.net/#giantswarm)
 
 Flannel-network-health serves as health endpoint for network configuration created by [flannel-operator](https://github.com/giantswarm/flannel-operator).
 
 * endpoint `/bridge-healthz` - check if interface `br-${CLUSTER_ID}` is present and if it has configured right ip address
 * endpoint `/flannel-healthz`- check if interface `flannel.${VNI}` is present and if it has configured right ip address
-
 
 
 ### How to build
