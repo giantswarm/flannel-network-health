@@ -17,13 +17,13 @@ const (
 )
 
 func (c *Config) LoadFlannelConfig() error {
-	err := waitForFlannelFile(c.Logger)
+	err := c.waitForFlannelFile(c.Logger)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
 	// fetch configuration from OS env
-	confFile, err := c.fetchConfFromOS()
+	confFile, err := c.readFlannelFile()
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -39,15 +39,10 @@ func (c *Config) LoadFlannelConfig() error {
 }
 
 // fetch ENVs values and read flannel file
-func (c *Config) fetchConfFromOS() ([]byte, error) {
-	// load NIC interfaces from ENV
-	c.Flag.Service.NetworkConfig.BridgeInterface = os.Getenv("NETWORK_BRIDGE_NAME")
-	c.Flag.Service.NetworkConfig.FlannelInterface = os.Getenv("NETWORK_FLANNEL_DEVICE")
-	// read flannel file
-	filename := os.Getenv("NETWORK_ENV_FILE_PATH")
-	fileContent, err := ioutil.ReadFile(filename)
+func (c *Config) readFlannelFile() ([]byte, error) {
+	fileContent, err := ioutil.ReadFile(c.Flag.Service.FlannelFile)
 	if err != nil {
-		return nil, microerror.Maskf(invalidFlannelFileError, "%s", filename)
+		return nil, microerror.Maskf(invalidFlannelFileError, "%s", c.Flag.Service.FlannelFile)
 	}
 
 	return fileContent, nil
@@ -55,7 +50,6 @@ func (c *Config) fetchConfFromOS() ([]byte, error) {
 
 // parse flannel configuration file and generate ips for interface
 func (c *Config) parseIPs(confFile []byte) error {
-
 	// get FLANNEL_SUBNET from flannel file via regexp
 	r, _ := regexp.Compile("FLANNEL_SUBNET=[0-9]+.[0-9]+.[0-9]+.[0-9]+/[0-9]+")
 	flannelLine := r.Find(confFile)
@@ -83,8 +77,7 @@ func (c *Config) parseIPs(confFile []byte) error {
 }
 
 // wait for flannel file
-func waitForFlannelFile(newLogger micrologger.Logger) error {
-	var flannelFile string = os.Getenv("NETWORK_ENV_FILE_PATH")
+func (c *Config) waitForFlannelFile(newLogger micrologger.Logger) error {
 	// wait for file creation
 	for count := 0; ; count++ {
 		// don't wait forever, if file is not created within retry limit, exit with failure
@@ -92,10 +85,10 @@ func waitForFlannelFile(newLogger micrologger.Logger) error {
 			return microerror.Maskf(invalidFlannelFileError, "After 100sec flannel file is not created. Exiting")
 		}
 		// check if file exists
-		if _, err := os.Stat(flannelFile); !os.IsNotExist(err) {
+		if _, err := os.Stat(c.Flag.Service.FlannelFile); !os.IsNotExist(err) {
 			break
 		}
-		newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", flannelFile))
+		newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", c.Flag.Service.FlannelFile))
 		time.Sleep(1 * time.Second)
 	}
 	// all good

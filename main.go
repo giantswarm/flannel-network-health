@@ -31,8 +31,34 @@ func main() {
 	}
 }
 
+func readEnv() error {
+	// load conf from ENV
+	f.Service.NetworkConfig.BridgeInterface = os.Getenv("NETWORK_BRIDGE_NAME")
+	f.Service.NetworkConfig.FlannelInterface = os.Getenv("NETWORK_FLANNEL_DEVICE")
+	f.Service.FlannelFile = os.Getenv("NETWORK_ENV_FILE_PATH")
+	f.Service.ListenAddress = os.Getenv("LISTEN_ADDRESS")
+	if f.Service.NetworkConfig.BridgeInterface == "" {
+		return microerror.Maskf(invalidConfigError, "NETWORK_BRIDGE_NAME must not be empty")
+	}
+	if f.Service.NetworkConfig.FlannelInterface == "" {
+		return microerror.Maskf(invalidConfigError, "NETWORK_FLANNEL_DEVICE must not be empty")
+	}
+	if f.Service.FlannelFile == "" {
+		return microerror.Maskf(invalidConfigError, "NETWORK_ENV_FILE_PATH must not be empty")
+	}
+	if f.Service.ListenAddress == "" {
+		return microerror.Maskf(invalidConfigError, "LISTEN_ADDRESS must not be empty")
+	}
+	return nil
+}
+
 func mainWithError() error {
 	var err error
+	err = readEnv()
+	if err != nil {
+		return err
+	}
+
 	// Create a new logger which is used by all packages.
 	var newLogger micrologger.Logger
 	{
@@ -96,7 +122,7 @@ func mainWithError() error {
 			serverConfig.MicroServerConfig.ServiceName = name
 			serverConfig.MicroServerConfig.TransactionResponder = transactionResponder
 			serverConfig.MicroServerConfig.Viper = v
-			serverConfig.MicroServerConfig.ListenAddress = os.Getenv("LISTEN_ADDRESS")
+			serverConfig.MicroServerConfig.ListenAddress = f.Service.ListenAddress
 			serverConfig.Service = newService
 
 			newServer, err = server.New(serverConfig)
