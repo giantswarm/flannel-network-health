@@ -1,9 +1,9 @@
-package interfaceHealthz
+package flannel
 
 import (
 	"context"
 	"fmt"
-	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz/key"
+	"github.com/giantswarm/flannel-network-health/service/healthz/flannel/key"
 	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"

@@ -2,7 +2,7 @@ package healthz
 
 import (
 	"github.com/giantswarm/flannel-network-health/flag/service/network"
-	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz"
+	"github.com/giantswarm/flannel-network-health/service/healthz/flannel"
 	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -31,22 +31,22 @@ func New(config Config) (*Service, error) {
 
 	var bridgeService healthz.Service
 	{
-		bridgeServiceConfig := interfaceHealthz.DefaultConfig()
+		bridgeServiceConfig := flannel.DefaultConfig()
 		bridgeServiceConfig.Name = config.NetworkConfig.BridgeInterface
 		bridgeServiceConfig.IP = config.NetworkConfig.BridgeIP
 		bridgeServiceConfig.Logger = config.Logger
-		bridgeService, err = interfaceHealthz.New(bridgeServiceConfig)
+		bridgeService, err = flannel.New(bridgeServiceConfig)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 	var flannelService healthz.Service
 	{
-		flannelServiceConfig := interfaceHealthz.DefaultConfig()
+		flannelServiceConfig := flannel.DefaultConfig()
 		flannelServiceConfig.Name = config.NetworkConfig.FlannelInterface
 		flannelServiceConfig.IP = config.NetworkConfig.FlannelIP
 		flannelServiceConfig.Logger = config.Logger
-		flannelService, err = interfaceHealthz.New(flannelServiceConfig)
+		flannelService, err = flannel.New(flannelServiceConfig)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}

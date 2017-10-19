@@ -1,4 +1,4 @@
-package interfaceHealthz
+package flannel
 
 import "github.com/giantswarm/microerror"
 
