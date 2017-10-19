@@ -54,10 +54,6 @@ func readEnv() error {
 
 func mainWithError() error {
 	var err error
-	err = readEnv()
-	if err != nil {
-		return err
-	}
 
 	// Create a new logger which is used by all packages.
 	var newLogger micrologger.Logger
@@ -73,7 +69,10 @@ func mainWithError() error {
 	// We define a server factory to create the custom server once all command
 	// line flags are parsed and all microservice configuration is storted out.
 	newServerFactory := func(v *viper.Viper) microserver.Server {
-
+		err = readEnv()
+		if err != nil {
+			panic(err)
+		}
 		// Create a new custom service which implements business logic.
 		var newService *service.Service
 		{
