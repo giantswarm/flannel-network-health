@@ -32,8 +32,8 @@ func New(config Config) (*Service, error) {
 	var bridgeService healthz.Service
 	{
 		bridgeServiceConfig := interfaceHealthz.DefaultConfig()
-		bridgeServiceConfig.NetworkInterface.Name = config.NetworkConfig.BridgeInterface
-		bridgeServiceConfig.NetworkInterface.IP = config.NetworkConfig.BridgeIP
+		bridgeServiceConfig.Name = config.NetworkConfig.BridgeInterface
+		bridgeServiceConfig.IP = config.NetworkConfig.BridgeIP
 		bridgeServiceConfig.Logger = config.Logger
 		bridgeService, err = interfaceHealthz.New(bridgeServiceConfig)
 		if err != nil {
@@ -43,8 +43,8 @@ func New(config Config) (*Service, error) {
 	var flannelService healthz.Service
 	{
 		flannelServiceConfig := interfaceHealthz.DefaultConfig()
-		flannelServiceConfig.NetworkInterface.Name = config.NetworkConfig.FlannelInterface
-		flannelServiceConfig.NetworkInterface.IP = config.NetworkConfig.FlannelIP
+		flannelServiceConfig.Name = config.NetworkConfig.FlannelInterface
+		flannelServiceConfig.IP = config.NetworkConfig.FlannelIP
 		flannelServiceConfig.Logger = config.Logger
 		flannelService, err = interfaceHealthz.New(flannelServiceConfig)
 		if err != nil {

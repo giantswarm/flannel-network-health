@@ -3,15 +3,12 @@ package interfaceHealthz
 import (
 	"context"
 	"fmt"
-	"time"
-
-	"github.com/giantswarm/microerror"
-	"github.com/giantswarm/micrologger"
-
-	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz/interface"
 	"github.com/giantswarm/flannel-network-health/service/healthz/interfaceHealthz/key"
 	"github.com/giantswarm/microendpoint/service/healthz"
+	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 	"github.com/vishvananda/netlink"
+	"time"
 )
 
 const (
@@ -25,8 +22,9 @@ const (
 // Config represents the configuration used to create a healthz service.
 type Config struct {
 	// Dependencies.
-	NetworkInterface _interface.NetworkInterface
-	Logger           micrologger.Logger
+	Name   string
+	IP     string
+	Logger micrologger.Logger
 }
 
 // DefaultConfig provides a default configuration to create a new healthz service
@@ -34,16 +32,18 @@ type Config struct {
 func DefaultConfig() Config {
 	return Config{
 		// Dependencies.
-		NetworkInterface: _interface.NetworkInterface{},
-		Logger:           nil,
+		Name:   "",
+		IP:     "",
+		Logger: nil,
 	}
 }
 
 // Service implements the healthz service interface.
 type Service struct {
 	// Dependencies.
-	networkInterface _interface.NetworkInterface
-	logger           micrologger.Logger
+	name   string
+	ip     string
+	logger micrologger.Logger
 
 	// Settings.
 	timeout time.Duration
@@ -52,10 +52,10 @@ type Service struct {
 // New creates a new configured healthz service.
 func New(config Config) (*Service, error) {
 	// Dependencies.
-	if config.NetworkInterface.IP == "" {
+	if config.IP == "" {
 		return nil, microerror.Maskf(invalidConfigError, "config.NetworkInterface.IP must not be empty string")
 	}
-	if config.NetworkInterface.Name == "" {
+	if config.Name == "" {
 		return nil, microerror.Maskf(invalidConfigError, "config.NetworkInterface.Name must not be empty string")
 	}
 	if config.Logger == nil {
@@ -64,8 +64,9 @@ func New(config Config) (*Service, error) {
 
 	newService := &Service{
 		// Dependencies.
-		networkInterface: config.NetworkInterface,
-		logger:           config.Logger,
+		name:   config.Name,
+		ip:     config.IP,
+		logger: config.Logger,
 	}
 
 	return newService, nil
@@ -73,7 +74,7 @@ func New(config Config) (*Service, error) {
 
 // GetHealthz implements the health check for network interface.
 func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
-	message := fmt.Sprintf("Healthcheck for interface %s has been successful. Interface is present and configured with ip %s.", s.networkInterface.Name, s.networkInterface.IP)
+	message := fmt.Sprintf("Healthcheck for interface %s has been successful. Interface is present and configured with ip %s.", s.name, s.ip)
 
 	failed, message := s.healthCheck(message)
 
@@ -81,7 +82,7 @@ func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
 		Description: Description,
 		Failed:      failed,
 		Message:     message,
-		Name:        Name + " " + s.networkInterface.Name,
+		Name:        Name + " " + s.name,
 	}
 
 	return response, nil
@@ -90,20 +91,20 @@ func (s *Service) GetHealthz(ctx context.Context) (healthz.Response, error) {
 // implementation fo the interface healthz logic
 func (s *Service) healthCheck(message string) (bool, string) {
 	// load interface
-	bridge, err := netlink.LinkByName(s.networkInterface.Name)
+	bridge, err := netlink.LinkByName(s.name)
 	if err != nil {
-		message = fmt.Sprintf("Cant find interface %s. %s", s.networkInterface.Name, err)
+		message = fmt.Sprintf("Cant find interface %s. %s", s.name, err)
 		return true, message
 	}
 	// check ip on interface
 	ipList, err := netlink.AddrList(bridge, netlink.FAMILY_V4)
 	if err != nil || len(ipList) == 0 {
-		message = fmt.Sprintf("Missing ip %s on the interface %s.", s.networkInterface.IP, s.networkInterface.Name)
+		message = fmt.Sprintf("Missing ip %s on the interface %s.", s.ip, s.name)
 		return true, message
 	}
 	// compare ip on interface
-	if len(ipList) > 0 && key.GetInterfaceIP(ipList) != s.networkInterface.IP {
-		message = fmt.Sprintf("Wrong ip on interface %s. Expected %s, but found %s.", s.networkInterface.Name, s.networkInterface.IP, key.GetInterfaceIP(ipList))
+	if len(ipList) > 0 && key.GetInterfaceIP(ipList) != s.ip {
+		message = fmt.Sprintf("Wrong ip on interface %s. Expected %s, but found %s.", s.name, s.ip, key.GetInterfaceIP(ipList))
 		return true, message
 	}
 	// all good
