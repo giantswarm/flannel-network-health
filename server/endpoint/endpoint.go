@@ -72,5 +72,3 @@ func New(config Config) (*Endpoint, error) {
 
 	return newEndpoint, nil
 }
-
-

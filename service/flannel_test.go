@@ -57,7 +57,7 @@ FLANNEL_IPMASQ=false`),
 			flannelFileContent: []byte(`FLANNEL_NETWORK=192.168.0.0/24
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=false`),
-			expectedErr: invalidFlannelConfiguration,
+			expectedErr: invalidFlannelConfigurationError,
 		},
 		// test 3 - invalid subnet in flannel file
 		{
@@ -72,7 +72,41 @@ FLANNEL_IPMASQ=false`),
 FLANNEL_SUBNET=_x.68.c.0/30
 FLANNEL_MTU=1450
 FLANNEL_IPMASQ=false`),
-			expectedErr: invalidFlannelConfiguration,
+			expectedErr: invalidFlannelConfigurationError,
+		},
+		// test 4 - empty flannel file
+		{
+			config: func(flannelFile []byte) (network.Network, error) {
+				conf := DefaultConfig()
+				conf.Flag = flag.New()
+				err := conf.parseIPs(flannelFile)
+				return conf.Flag.Service.NetworkConfig, err
+			},
+			expectedConfig:     network.Network{},
+			flannelFileContent: []byte(``),
+			expectedErr:        invalidFlannelConfigurationError,
+		},
+		// test 5 - non flannel file
+		{
+			config: func(flannelFile []byte) (network.Network, error) {
+				conf := DefaultConfig()
+				conf.Flag = flag.New()
+				err := conf.parseIPs(flannelFile)
+				return conf.Flag.Service.NetworkConfig, err
+			},
+			expectedConfig: network.Network{},
+			flannelFileContent: []byte(`machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - |
+      wget -q $(curl -sS -H "Authorization: token $RELEASE_TOKEN" https://api.github.com/repos/giantswarm/architect/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)
+    - chmod +x ./architect
+    - ./architect version
+`),
+			expectedErr: invalidFlannelConfigurationError,
 		},
 	}
 

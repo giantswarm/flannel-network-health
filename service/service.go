@@ -88,8 +88,8 @@ func New(config Config) (*Service, error) {
 
 	newService := &Service{
 		// Dependencies.
-		Healthz:  healthzService,
-		Version:  versionService,
+		Healthz: healthzService,
+		Version: versionService,
 
 		// Internals
 		bootOnce: sync.Once{},
@@ -100,8 +100,8 @@ func New(config Config) (*Service, error) {
 
 type Service struct {
 	// Dependencies.
-	Healthz  *healthz.Service
-	Version  *version.Service
+	Healthz *healthz.Service
+	Version *version.Service
 
 	// Internals.
 	bootOnce sync.Once

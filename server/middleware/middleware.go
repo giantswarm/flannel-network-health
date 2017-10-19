@@ -27,9 +27,7 @@ func DefaultConfig() Config {
 type Middleware struct {
 }
 
-
 // New creates a new configured middleware.
 func New(config Config) (*Middleware, error) {
 	return &Middleware{}, nil
 }
-
