@@ -22,9 +22,10 @@
   revision = "1ea4d8cd5f0167625f134c855ae42fc747191890"
 
 [[projects]]
+  branch = "master"
   name = "github.com/giantswarm/microerror"
   packages = ["."]
-  revision = "5ade94eb4ee35ef72eb9382228470caeddb29989"
+  revision = "3bc3cb1a36700aa4bbfcf6c335bc2ab92ad66d8d"
 
 [[projects]]
   name = "github.com/giantswarm/microkit"
@@ -53,12 +54,13 @@
   revision = "8a69b2ab80ba2d0bd40d609206518fefacfc8fdf"
 
 [[projects]]
+  branch = "master"
   name = "github.com/giantswarm/microstorage"
   packages = [
     ".",
     "memory"
   ]
-  revision = "99418478ec8f5c68f9b5fc5e6be7e0474948f80d"
+  revision = "e7d619b8ec166cd68eb4d026b68b9193bb645d8f"
 
 [[projects]]
   name = "github.com/go-kit/kit"
@@ -262,6 +264,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a883cf011fa8f0a9cce137a9909f007888efa94a64ae496cb53fa97378772da5"
+  inputs-digest = "ecc330ae3f127c12267b1be972e9ce41b6e69dc664b6cd885eaedbef82c1a9b8"
   solver-name = "gps-cdcl"
   solver-version = 1
