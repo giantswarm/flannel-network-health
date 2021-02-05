@@ -11,4 +11,4 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - Add github workflows.
 
-[Unreleased]: https://github.com/giantswarm/flannel-network-health/master
+[Unreleased]: https://github.com/giantswarm/flannel-network-health/tree/master
