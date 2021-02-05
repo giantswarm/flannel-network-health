@@ -6,11 +6,21 @@ orbs:
 workflows:
   build:
     jobs:
+      - architect/go-build:
+          name: go-build
+          binary: flannel-network-health
+          resource_class: large
+          filters:
+            tags:
+              only: /^v.*/
+
       - architect/push-to-docker:
           name: push-to-quay
           image: "quay.io/giantswarm/flannel-network-health"
           username_envar: "QUAY_USERNAME"
           password_envar: "QUAY_PASSWORD"
+          requires:
+            - go-build
           filters:
             tags:
               only: /^v.*/
