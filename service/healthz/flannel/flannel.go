@@ -3,12 +3,14 @@ package flannel
 import (
 	"context"
 	"fmt"
-	"github.com/giantswarm/flannel-network-health/service/healthz/flannel/key"
+	"time"
+
 	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/vishvananda/netlink"
-	"time"
+
+	"github.com/giantswarm/flannel-network-health/service/healthz/flannel/key"
 )
 
 const (

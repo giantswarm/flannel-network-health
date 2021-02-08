@@ -2,14 +2,15 @@ package service
 
 import (
 	"fmt"
-	"github.com/giantswarm/microerror"
-	"github.com/giantswarm/micrologger"
 	"io/ioutil"
 	"net"
 	"os"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 )
 
 const (

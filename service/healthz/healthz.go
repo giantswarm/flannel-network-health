@@ -1,11 +1,12 @@
 package healthz
 
 import (
-	"github.com/giantswarm/flannel-network-health/flag/service/network"
-	"github.com/giantswarm/flannel-network-health/service/healthz/flannel"
 	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+
+	"github.com/giantswarm/flannel-network-health/flag/service/network"
+	"github.com/giantswarm/flannel-network-health/service/healthz/flannel"
 )
 
 // Config represents the configuration used to create a healthz service.
