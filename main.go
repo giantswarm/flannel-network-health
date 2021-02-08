@@ -154,7 +154,7 @@ func mainWithError() error {
 		}
 	}
 
-	newCommand.CobraCommand().Execute()
+	_ = newCommand.CobraCommand().Execute()
 
 	return nil
 }

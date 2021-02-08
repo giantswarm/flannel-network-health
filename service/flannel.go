@@ -35,7 +35,7 @@ func (c *Config) LoadFlannelConfig() error {
 		return microerror.Mask(err)
 	}
 	// debug output
-	c.Logger.Log("debug", fmt.Sprintf("Loaded Config: %+v", c.Flag.Service.NetworkConfig))
+	_ = c.Logger.Log("debug", fmt.Sprintf("Loaded Config: %+v", c.Flag.Service.NetworkConfig))
 	return nil
 }
 
@@ -89,7 +89,7 @@ func (c *Config) waitForFlannelFile(newLogger micrologger.Logger) error {
 		if _, err := os.Stat(c.Flag.Service.FlannelFile); !os.IsNotExist(err) {
 			break
 		}
-		newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", c.Flag.Service.FlannelFile))
+		_ = newLogger.Log("debug", fmt.Sprintf("Waiting for file '%s' to be created.", c.Flag.Service.FlannelFile))
 		time.Sleep(1 * time.Second)
 	}
 	// all good
