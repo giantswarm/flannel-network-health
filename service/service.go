@@ -1,12 +1,14 @@
 package service
 
 import (
-	"github.com/giantswarm/flannel-network-health/flag"
-	"github.com/giantswarm/flannel-network-health/service/healthz"
+	"sync"
+
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"sync"
+
+	"github.com/giantswarm/flannel-network-health/flag"
+	"github.com/giantswarm/flannel-network-health/service/healthz"
 )
 
 // Config represents the configuration used to create a new service.

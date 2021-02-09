@@ -3,12 +3,13 @@ package flannel
 import (
 	"context"
 	"fmt"
-	"github.com/giantswarm/flannel-network-health/service/healthz/flannel/key"
+
 	"github.com/giantswarm/microendpoint/service/healthz"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/vishvananda/netlink"
-	"time"
+
+	"github.com/giantswarm/flannel-network-health/service/healthz/flannel/key"
 )
 
 const (
@@ -44,9 +45,6 @@ type Service struct {
 	name   string
 	ip     string
 	logger micrologger.Logger
-
-	// Settings.
-	timeout time.Duration
 }
 
 // New creates a new configured healthz service.

@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/giantswarm/flannel-network-health/flag"
-	"github.com/giantswarm/flannel-network-health/server"
-	"github.com/giantswarm/flannel-network-health/service"
+	"os"
+
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/microkit/command"
 	microserver "github.com/giantswarm/microkit/server"
@@ -13,7 +12,10 @@ import (
 	"github.com/giantswarm/microstorage"
 	"github.com/giantswarm/microstorage/memory"
 	"github.com/spf13/viper"
-	"os"
+
+	"github.com/giantswarm/flannel-network-health/flag"
+	"github.com/giantswarm/flannel-network-health/server"
+	"github.com/giantswarm/flannel-network-health/service"
 )
 
 var (
@@ -152,7 +154,7 @@ func mainWithError() error {
 		}
 	}
 
-	newCommand.CobraCommand().Execute()
+	_ = newCommand.CobraCommand().Execute()
 
 	return nil
 }
