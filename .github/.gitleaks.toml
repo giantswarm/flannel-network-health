@@ -1,0 +1,4 @@
+[allowlist]
+#    files = ['''(?i)(key\.pem)$''']
+    files = ['''vendor/github.com/tylerb/graceful/test-fixtures/key.pem''']
+    description = "ignore key in vendored test fixture"
