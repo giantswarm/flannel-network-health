@@ -25,3 +25,5 @@ require (
 	github.com/vishvananda/netns v0.0.0-20170707011535-86bef332bfc3 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
+
+replace github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
