@@ -3,12 +3,12 @@ module github.com/giantswarm/flannel-network-health
 go 1.15
 
 require (
-	github.com/giantswarm/microendpoint v0.0.0-20171004075544-1ea4d8cd5f01
-	github.com/giantswarm/microerror v0.0.0-20181001144842-3bc3cb1a3670
+	github.com/giantswarm/microendpoint v1.0.0
+	github.com/giantswarm/microerror v0.4.0
 	github.com/giantswarm/microkit v0.0.0-20171018111952-e6c3aafd2c6b
-	github.com/giantswarm/micrologger v0.0.0-20170807104500-8a69b2ab80ba
+	github.com/giantswarm/micrologger v0.6.0
 	github.com/giantswarm/microstorage v0.0.0-20181004091247-e7d619b8ec16
-	github.com/go-kit/kit v0.11.0
+	github.com/go-kit/kit v0.12.0
 	github.com/hashicorp/hcl v0.0.0-20171017181929-23c074d0eceb // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/juju/errgo v0.0.0-20140925100237-08cceb5d0b53 // indirect
