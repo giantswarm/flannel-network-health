@@ -21,8 +21,7 @@ require (
 	github.com/spf13/pflag v1.0.1-0.20171016164048-1f33b80956cd // indirect
 	github.com/spf13/viper v1.0.1-0.20170929210642-d9cca5ef3303
 	github.com/tylerb/graceful v1.2.15 // indirect
-	github.com/vishvananda/netlink v0.0.0-20170924180554-177f1ceba557
-	github.com/vishvananda/netns v0.0.0-20170707011535-86bef332bfc3 // indirect
+	github.com/vishvananda/netlink v1.2.1-beta.2
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )
 
