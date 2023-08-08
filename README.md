@@ -1,4 +1,5 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/flannel-network-health/tree/master.svg?style=shield)](https://circleci.com/gh/giantswarm/flannel-network-health/tree/master)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/flannel-network-health/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/flannel-network-health/tree/master)
+
 # flannel-network-health
 
 Flannel-network-health serves as health endpoint for network configuration created by [flannel-operator](https://github.com/giantswarm/flannel-operator).
